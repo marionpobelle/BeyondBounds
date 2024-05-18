@@ -10,6 +10,12 @@ EditorBuildSettings:
     guid: 94119e34d3941f54bae0bccf1306cff6
   - enabled: 1
     path: Assets/Scenes/PlayerJoinSetup.unity
+    guid: d4012fc1d19e23d4f84099b60839d343
+  - enabled: 1
+    path: Assets/Scenes/Game.unity
     guid: 0b52e421e4cdf4e4aab285ed8d788b0b
+  - enabled: 1
+    path: Assets/Scenes/EndScreenWon.unity
+    guid: 68a17a009dbf6d9468a0ace0d8b5dd89
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 63d17e8b0cef6bd4a849e3b2af0abdde, type: 2}
