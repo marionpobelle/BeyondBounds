@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Tooltip("Is the player dashing.")] public bool IsDashing;
 
     [SerializeField, Tooltip("Is the player doing a task.")] private bool _isOccupied;
+    [SerializeField, Tooltip("Is the player grounded.")] private bool _isGrounded;
 
     [SerializeField, Tooltip("Is the player pressing the interact button.")] private bool _isPressingInteract;
 
@@ -53,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (IsDashing)
+        if (IsDashing || _isOccupied)
         {
             return;
         }
@@ -81,7 +82,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame.
     private void FixedUpdate()
     {
-        if (IsDashing)
+        if (IsDashing || _isOccupied)
         {
             return;
         }
@@ -89,19 +90,37 @@ public class PlayerController : MonoBehaviour
         _movementDirection = Quaternion.Euler(0, CurrentCamera.transform.eulerAngles.y, 0) * _movementDirection;
         _movementDirection.Normalize();
         _facingDirection = _movementDirection;
+
         if (_movementDirection != Vector3.zero)
         {
-            velocity = Vector3.Lerp(velocity, _movementDirection * _playerSpeed, _speedUpRate);
+            if (_isGrounded)
+            {
+                velocity = Vector3.Lerp(velocity, _movementDirection * _playerSpeed, _speedUpRate);
+            }
+            else
+            {
+                _movementDirection = new Vector3(_movementDirection.x, -1, _movementDirection.z);
+                velocity = Vector3.Lerp(velocity, _movementDirection * _playerSpeed, _speedUpRate);
+            }
             Quaternion toRotation = Quaternion.LookRotation(_facingDirection, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, _playerRotationSpeed);
-            
+
             _playerRigidbody.AddForce(velocity, ForceMode.Impulse);
             if (_playerRigidbody.velocity.magnitude > _playerSpeed) _playerRigidbody.velocity = _playerRigidbody.velocity.normalized * _playerSpeed;
+
 
         }
         else
         {
-            velocity = Vector3.Lerp(velocity, Vector3.zero, _slowDownSpeed);
+            if (_isGrounded)
+            {
+                velocity = Vector3.Lerp(velocity, Vector3.zero, _slowDownSpeed);
+            }
+            else
+            {
+                velocity = Vector3.Lerp(velocity, new Vector3(0, -10, 0), _slowDownSpeed);
+            }
+            
         }
 
     }
@@ -253,11 +272,28 @@ public class PlayerController : MonoBehaviour
     //OnCollisionStay is called once per frame for every Collider or Rigidbody that touches another Collider or Rigidbody.
     private void OnCollisionStay(Collision collision)
     {
+        //Player grounded
+        if (collision.gameObject.layer == 3)
+        {
+            _isGrounded = true;
+            _playerRigidbody.drag = 20;
+        }
         //Player next to an object they can interact with
         if (collision.gameObject.CompareTag("InteractableObject") && _isPressingInteract && !_isOccupied)
         {
             //Start Task
             _isOccupied = true;
+        }
+    }
+
+    //OnCollisionStay is called once per frame for every Collider or Rigidbody that touches another Collider or Rigidbody.
+    private void OnCollisionExit(Collision collision)
+    {
+        //Player grounded
+        if (collision.gameObject.layer == 3)
+        {
+            _isGrounded = false;
+            _playerRigidbody.drag = 0.1f;
         }
     }
 }
