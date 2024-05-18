@@ -163,6 +163,8 @@ public class PlayerController : MonoBehaviour
         {
             _isOccupied = false;
             _currentTask.SetPlayer(null);
+            _currentTask.IsTaskRunning = false;
+            Debug.Log("Canceled task");
             _currentTask = null;
         }
     }
@@ -296,7 +298,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("InteractableObject") && _isPressingInteract && !_isOccupied)
         {
             _currentTask = collision.gameObject.GetComponent<TaskHandler>();
-            if (_currentTask.GetRunningState())
+            if (_currentTask.IsTaskRunning || !_currentTask.GetTaskAvailability())
             {
                 _currentTask = null;
                 return;
@@ -311,6 +313,7 @@ public class PlayerController : MonoBehaviour
                 }
                 _currentTask = collision.gameObject.GetComponent<TaskHandler>();
                 _currentTask.SetPlayer(this);
+                StartCoroutine(_currentTask.RunTask());
             }
             
         }

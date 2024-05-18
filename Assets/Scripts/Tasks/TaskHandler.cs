@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class TaskHandler : MonoBehaviour
 {
 
     [SerializeField, Tooltip("How long the task is in seconds.")] private int _taskDuration;
+    [SerializeField, Tooltip("How long the task is in seconds.")] private int _taskCooldown;
     [SerializeField, Tooltip("The variation in the resources this task engender. 0:WATER, 1:FOOD, 2:ENERGY, 3:HEALTH")] private Vector4 _resourceChanges;
 
-    [SerializeField, Tooltip("Is the task being performed.")] private bool _isTaskRunning;
+    [SerializeField, Tooltip("Is the task being performed.")] private bool _canPerformTask;
+    [Tooltip("Is the task being performed.")] public bool IsTaskRunning;
     [SerializeField, Tooltip("The player performing the task.")] private PlayerController _playerDoingTask;
 
     //Events
@@ -19,36 +22,29 @@ public class TaskHandler : MonoBehaviour
     private void Awake()
     {
         _playerDoingTask = null; 
-        _isTaskRunning = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(!_isTaskRunning && _playerDoingTask != null)
-        {
-            StartCoroutine(RunTask());
-        }
-        if(_isTaskRunning && _playerDoingTask == null)
-        {
-            StopCoroutine(RunTask());
-            _isTaskRunning = false;
-            Debug.Log("Cancelled task");
-        }
+        IsTaskRunning = false;
+        _canPerformTask = true;
     }
 
     /// <summary>
     /// Couroutine running the task.
     /// </summary>
-    private IEnumerator RunTask()
+    public IEnumerator RunTask()
     {
-        _isTaskRunning = true;
+        Debug.Log("Task started !");
+        IsTaskRunning = true;
+        _canPerformTask = false;
         yield return new WaitForSeconds(_taskDuration);
-        _isTaskRunning = false;
-        _playerDoingTask.SetPlayerOccupied(false);
+        if (IsTaskRunning)
+        {
+            OnResourceChangeEvent?.Invoke(_resourceChanges);
+            Debug.Log("Did change the resources");
+        }
+        IsTaskRunning = false;
+        if(_playerDoingTask != null) _playerDoingTask.SetPlayerOccupied(false);
         _playerDoingTask = null;
-        //OnResourceChangeEvent?.Invoke(_resourceChanges);
-        Debug.Log("Change In resources");
+        yield return new WaitForSeconds(_taskCooldown);
+        _canPerformTask = true;
     }
 
     /// <summary>
@@ -61,10 +57,10 @@ public class TaskHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the task is being performed by a player already or not.
+    /// Checks if the task is on cooldown.
     /// </summary>
-    public bool GetRunningState()
+    public bool GetTaskAvailability()
     {
-        return _isTaskRunning;
+        return _canPerformTask;
     }
 }

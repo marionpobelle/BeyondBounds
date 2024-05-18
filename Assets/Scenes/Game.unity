@@ -216,6 +216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxTotalRunTime: 60
   TotalRunTime: 0
+  _globalResources: {x: 4, y: 5, z: 6, w: 7}
 --- !u!4 &214454327
 Transform:
   m_ObjectHideFlags: 0
@@ -1158,18 +1159,6 @@ PrefabInstance:
     - target: {fileID: 3912148169064674561, guid: 0c62ff64c2b3b8143b9d532479844437, type: 3}
       propertyPath: m_Name
       value: EnergyBuilding
-      objectReference: {fileID: 0}
-    - target: {fileID: 5582272150043655967, guid: 0c62ff64c2b3b8143b9d532479844437, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5582272150043655967, guid: 0c62ff64c2b3b8143b9d532479844437, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5582272150043655967, guid: 0c62ff64c2b3b8143b9d532479844437, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5582272150043655967, guid: 0c62ff64c2b3b8143b9d532479844437, type: 3}
       propertyPath: m_LocalPosition.x
