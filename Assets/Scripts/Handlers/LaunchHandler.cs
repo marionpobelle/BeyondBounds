@@ -14,7 +14,6 @@ public class LaunchHandler : MonoBehaviour
     /// </summary>
     private void OnMainControllerJoined()
     {
-        Debug.Log("Main Controller joined !");
         SceneManager.LoadScene("PlayerJoinSetup");
     }
 

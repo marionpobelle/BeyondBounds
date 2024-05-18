@@ -356,9 +356,9 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!20 &1199853598 stripped
+--- !u!20 &1320335096 stripped
 Camera:
-  m_CorrespondingSourceObject: {fileID: 5089009168536599482, guid: c22717a318e9ed2429af87d1b90ecdbe, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6350872234593478781, guid: c22717a318e9ed2429af87d1b90ecdbe, type: 3}
   m_PrefabInstance: {fileID: 7976816478678829227}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1334612741
@@ -413,7 +413,7 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 1}
   - {x: 1, y: 0, z: 1}
   PlayerConfigs: []
-  GameCamera: {fileID: 5089009168536599482, guid: c22717a318e9ed2429af87d1b90ecdbe, type: 3}
+  GameCamera: {fileID: 6350872234593478781, guid: c22717a318e9ed2429af87d1b90ecdbe, type: 3}
   JoinAction:
     m_Name: Join
     m_Type: 0
@@ -720,7 +720,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 1199853598}
+  m_Camera: {fileID: 1320335096}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1

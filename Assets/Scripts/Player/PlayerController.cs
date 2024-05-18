@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Tooltip("Is the player grounded.")] private bool _isGrounded;
 
     [SerializeField, Tooltip("Is the player pressing the interact button.")] private bool _isPressingInteract;
+    [SerializeField, Tooltip("Is the player pressing the interact button.")] private TaskHandler _currentTask;
 
     [SerializeField] private Rigidbody _playerRigidbody;
     [SerializeField] private TrailRenderer _trailRenderer;
@@ -158,8 +159,12 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Context containing the inputs.</param>
     private void OnTaskCanceled(InputAction.CallbackContext context)
     {
-        _isOccupied = false;
-        //Find a way to signify to the task building that we're stopping, event ?
+        if (_isOccupied && _currentTask != null)
+        {
+            _isOccupied = false;
+            _currentTask.SetPlayer(null);
+            _currentTask = null;
+        }
     }
 
     /// <summary>
@@ -249,6 +254,15 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
+    /// Set's the player occupied status.
+    /// </summary>
+    public void SetPlayerOccupied(bool isOccupied)
+    {
+        _isOccupied = isOccupied;
+    }
+
+
+    /// <summary>
     /// Starts the set of actions linked to the dashing action.
     /// </summary>
     private IEnumerator Dash()
@@ -281,8 +295,24 @@ public class PlayerController : MonoBehaviour
         //Player next to an object they can interact with
         if (collision.gameObject.CompareTag("InteractableObject") && _isPressingInteract && !_isOccupied)
         {
-            //Start Task
-            _isOccupied = true;
+            _currentTask = collision.gameObject.GetComponent<TaskHandler>();
+            if (_currentTask.GetRunningState())
+            {
+                _currentTask = null;
+                return;
+            }
+            else
+            {
+                _isOccupied = true;
+                if (_animator != null)
+                {
+                    //Animation Idle 
+                    _animator.SetBool("IsMoving", false);
+                }
+                _currentTask = collision.gameObject.GetComponent<TaskHandler>();
+                _currentTask.SetPlayer(this);
+            }
+            
         }
     }
 
