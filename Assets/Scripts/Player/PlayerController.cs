@@ -12,10 +12,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField, Tooltip("Speed at which the player slows down after they stop moving.")] private float _slowDownSpeed = .1f;
     [SerializeField, Tooltip("Speed at which the player speeds up after they start moving.")] float _speedUpRate = .1f;
-   
-    [SerializeField, Tooltip("Dash power, the higher it is the faster the player goes.")] private float _dashingPower = 24f;
-    [SerializeField, Tooltip("Dashing time, how long the dash goes for.")] private float _dashingTime = 0.2f;
-    [SerializeField, Tooltip("Dash cooldown")] private float _dashingCooldown = 2f;
 
     [SerializeField, Tooltip("Player index.")] public int PlayerIndex;
     [SerializeField, Tooltip("Player ready state.")] public bool IsReady;
@@ -24,9 +20,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Tooltip("Player current velocity.")] private Vector3 velocity;
     [SerializeField, Tooltip("Player movement direction.")] private Vector3 _movementDirection;
     [SerializeField, Tooltip("Player facing direction.")] private Vector3 _facingDirection;
-
-    [SerializeField, Tooltip("Can the player dash.")] private bool _canDash;
-    [SerializeField, Tooltip("Is the player dashing.")] public bool IsDashing;
 
     [SerializeField, Tooltip("Is the player doing a task.")] private bool _isOccupied;
     [SerializeField, Tooltip("Is the player grounded.")] private bool _isGrounded;
@@ -47,15 +40,13 @@ public class PlayerController : MonoBehaviour
     //Awake is called when an enabled script instance is being loaded, before the application starts.
     private void Awake()
     {
-        _canDash = true;
         IsReady = false;
-        IsDashing = false;
         OriginPosition = transform.position;
     }
 
     private void Update()
     {
-        if (IsDashing || _isOccupied)
+        if (_isOccupied)
         {
             return;
         }
@@ -83,7 +74,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame.
     private void FixedUpdate()
     {
-        if (IsDashing || _isOccupied)
+        if (_isOccupied)
         {
             return;
         }
@@ -169,18 +160,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Executes actions when the player dashes.
-    /// </summary>
-    /// <param name="context">Context containing the inputs.</param>
-    private void OnDash(InputAction.CallbackContext context)
-    {
-        if (_canDash && !_isOccupied)
-        {
-            StartCoroutine(Dash());
-        }
-    }
-
     //OnEnable is called when the object becomes enabled and active.
     private void OnEnable()
     {
@@ -198,7 +177,6 @@ public class PlayerController : MonoBehaviour
     {
         playerControls.Gameplay.Move.performed -= OnMove;
         playerControls.Gameplay.Move.canceled -= OnMove;
-        playerControls.Gameplay.Dash.performed -= OnDash;
         playerControls.Gameplay.Interact.performed -= OnInteract;
         playerControls.Gameplay.Interact.canceled -= OnInteractCanceled;
         playerControls.Gameplay.Cancel.performed -= OnTaskCanceled;
@@ -215,7 +193,6 @@ public class PlayerController : MonoBehaviour
         inputUser.AssociateActionsWithUser(playerControls);
         playerControls.Gameplay.Move.performed += OnMove;
         playerControls.Gameplay.Move.canceled += OnMove;
-        playerControls.Gameplay.Dash.performed += OnDash;
         playerControls.Gameplay.Interact.performed += OnInteract;
         playerControls.Gameplay.Interact.canceled += OnInteractCanceled;
         playerControls.Gameplay.Cancel.performed += OnTaskCanceled;
@@ -231,7 +208,6 @@ public class PlayerController : MonoBehaviour
         inputUser.UnpairDevicesAndRemoveUser();
         playerControls.Gameplay.Move.performed -= OnMove;
         playerControls.Gameplay.Move.canceled -= OnMove;
-        playerControls.Gameplay.Dash.performed -= OnDash;
         playerControls.Gameplay.Interact.performed -= OnInteract;
         playerControls.Gameplay.Interact.canceled -= OnInteractCanceled;
         playerControls.Gameplay.Cancel.performed -= OnTaskCanceled;
@@ -261,28 +237,6 @@ public class PlayerController : MonoBehaviour
     public void SetPlayerOccupied(bool isOccupied)
     {
         _isOccupied = isOccupied;
-    }
-
-
-    /// <summary>
-    /// Starts the set of actions linked to the dashing action.
-    /// </summary>
-    private IEnumerator Dash()
-    {
-        //GRAPH - Animation Dash
-        _canDash = false;
-        _isOccupied = true;
-        IsDashing = true;
-        _playerRigidbody.useGravity = false;
-        _playerRigidbody.velocity = _movementDirection * _dashingPower;
-        _trailRenderer.emitting = true;
-        yield return new WaitForSeconds(_dashingTime);
-        _trailRenderer.emitting = false;
-        IsDashing = false;
-        _playerRigidbody.useGravity = true;
-        yield return new WaitForSeconds(_dashingCooldown);
-        _canDash = true;
-        _isOccupied = false;
     }
 
     //OnCollisionStay is called once per frame for every Collider or Rigidbody that touches another Collider or Rigidbody.

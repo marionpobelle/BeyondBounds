@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6715197124512590318}
   - component: {fileID: 5732872079248903841}
   m_Layer: 0
-  m_Name: EnergyBuilding
+  m_Name: ResourceBuilding1
   m_TagString: InteractableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,7 +72,7 @@ MonoBehaviour:
   _taskCooldown: 10
   _resourceChanges: {x: 0, y: 0, z: 2, w: 0}
   _canPerformTask: 0
-  _isTaskRunning: 0
+  IsTaskRunning: 0
   _playerDoingTask: {fileID: 0}
 --- !u!1001 &5456978014696572376
 PrefabInstance:
